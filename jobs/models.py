@@ -1,7 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 class Job(models.Model):
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="jobs"
+    )
+
+
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     salary = models.IntegerField()

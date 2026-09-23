@@ -4,7 +4,9 @@ from .forms import CustomUserCreationForm, CustomErrorList
 from django.shortcuts import redirect
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
-from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
+from .models import Profile
+
 
 class CustomErrorList(ErrorList):
     def __str__(self):
@@ -48,7 +50,13 @@ def signup(request):
     elif request.method == 'POST':
         form = CustomUserCreationForm(request.POST, error_class=CustomErrorList)
         if form.is_valid():
-            form.save()
+            user = form.save()
+
+            Profile.objects.create(
+                user=user,
+                role=form.cleaned_data['role']
+            )
+            
             return redirect('accounts.login')
         else:
             template_data['form'] = form
