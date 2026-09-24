@@ -18,8 +18,24 @@ class Job(models.Model):
     location = models.TextField()
     description = models.TextField()
     image = models.ImageField(upload_to='job_images/')
+
+    WORK_TYPE_CHOICES = [
+    ('remote', 'Remote'),
+    ('onsite', 'On-site'),
+    ('hybrid', 'Hybrid'),
+    ]
+
+    work_type = models.CharField(
+        max_length=10,
+        choices=WORK_TYPE_CHOICES,
+        default='onsite'
+    )
+
+    visa_sponsorship = models.BooleanField(default=False)
+
     def __str__(self):
         return str(self.id) + ' - ' + self.title
+        
 class CartItem(models.Model):
     user = models.ForeignKey(
         User,
