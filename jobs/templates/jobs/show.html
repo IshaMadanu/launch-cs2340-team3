@@ -9,6 +9,16 @@
         <hr />
         <p><b>Description:</b> {{template_data.job.description }}</p>
         <p><b>Salary:</b> ${{template_data.job.salary }}</p>
+        {% if user.is_authenticated %}
+          <form method="POST"
+                action="{% url 'jobs.add_to_cart' template_data.job.id %}">
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-primary">
+              Add to Cart
+            </button>
+          </form>
+        {% endif %}
       </div>
       <div class="col-md-6 mx-auto mb-3 text-center">
         <img src="{{ template_data.job.image.url }}" class="rounded img-card-400" />

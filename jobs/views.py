@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Job
+from .models import Job, CartItem
 from .forms import JobForm
 
 # Create your views here.
@@ -87,3 +87,38 @@ def show(request, id):
     template_data['job'] = job
     return render(request, 'jobs/show.html',
                   {'template_data': template_data})
+
+@login_required
+def cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+
+    return render(request, 'jobs/cart.html', {
+        'cart_items': cart_items
+    })
+
+
+@login_required
+def add_to_cart(request, id):
+    job = get_object_or_404(Job, id=id)
+
+    if request.method == 'POST':
+        CartItem.objects.get_or_create(
+            user=request.user,
+            job=job
+        )
+
+    return redirect('jobs.cart')
+
+
+@login_required
+def remove_from_cart(request, id):
+    cart_item = get_object_or_404(
+        CartItem,
+        user=request.user,
+        job_id=id
+    )
+
+    if request.method == 'POST':
+        cart_item.delete()
+
+    return redirect('jobs.cart')

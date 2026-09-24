@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2>My Job Cart</h2>
+
+    {% if cart_items %}
+
+        {% for item in cart_items %}
+            <div class="card mb-3">
+                <div class="card-body">
+
+                    <h5>{{ item.job.title }}</h5>
+
+                    <p>
+                        Location: {{ item.job.location }}
+                    </p>
+
+                    <p>
+                        Salary: ${{ item.job.salary }}
+                    </p>
+
+                    <a href="{% url 'jobs.show' item.job.id %}"
+                       class="btn btn-primary">
+                        View Job
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="{% url 'jobs.remove_from_cart' item.job.id %}"
+                        style="display:inline;"
+                    >
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-danger">
+                            Remove
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        {% endfor %}
+
+    {% else %}
+
+        <p>Your job cart is empty.</p>
+
+    {% endif %}
+</div>
+
+{% endblock %}
