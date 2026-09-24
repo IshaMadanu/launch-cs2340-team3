@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="job-form-container">
+  <h1>{{ page_title }}</h1>
+
+  <form method="POST" enctype="multipart/form-data" class="job-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+          <div class="field-error">{{ field.errors }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="job-form-actions">
+      <button type="submit" class="btn btn-primary">
+        {% if editing %}Save Changes{% else %}Submit{% endif %}
+      </button>
+      <a href="{% url 'jobs.recruiter' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="cart-page bg-index">
+
+    <div class="cart-container">
+
+        {% if cart_items %}
+
+            {% for item in cart_items %}
+
+                <div class="figma-job-card">
+
+                    <!-- LEFT SIDE -->
+                    <div class="figma-job-main">
+
+                        {% if item.job.image %}
+                            <div class="figma-logo-box">
+                                <img
+                                    src="{{ item.job.image.url }}"
+                                    alt="{{ item.job.title }}"
+                                >
+                            </div>
+                        {% endif %}
+
+                        <div class="figma-job-title">
+
+                            <div class="figma-company">
+                                POSTED BY {{ item.job.recruiter.username }}
+                            </div>
+
+                            <h3>{{ item.job.title }}</h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MIDDLE -->
+                    <div class="figma-job-details">
+
+                        <div class="figma-meta-row">
+
+                            <span class="figma-meta">
+                                ${{ item.job.salary }}
+                            </span>
+
+                            <span class="figma-meta">
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ item.job.location }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="figma-skills-row">
+
+                            {% for skill in item.skills_list %}
+                                <span class="figma-skill">
+                                    {{ skill }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RIGHT SIDE -->
+                    <div class="figma-cart-actions">
+
+                        <a
+                            href="{% url 'jobs.show' item.job.id %}"
+                            class="figma-view-btn"
+                        >
+                            View Job
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="{% url 'jobs.remove_from_cart' item.job.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="figma-remove-btn"
+                            >
+                                Remove from cart
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="figma-empty-cart">
+
+                <h2>Your cart is empty</h2>
+
+                <p>
+                    Add jobs you're interested in to review them here.
+                </p>
+
+                <a href="{% url 'jobs.index' %}" class="figma-view-btn">
+                    Browse Jobs
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock content %}

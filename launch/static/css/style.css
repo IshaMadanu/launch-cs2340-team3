@@ -4,6 +4,269 @@
   background-size: 100% auto;
 }
 
-.bg-dark {
-  background-color: #2E2E2E !important;
+.img-card-200 {
+  width: fit-content;
+  max-height: 100px;
+}
+
+.img-card-400 {
+  width: fit-content;
+  max-height: 200px;
+}
+
+.launch-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 610;
+    font-size: 24px;
+}
+
+.launch-brand img {
+    width: 40px;
+    height: 40px;
+}
+
+/* CART PAGE */
+
+.cart-page {
+    min-height: calc(100vh - 56px);
+    padding: 34px 0 80px;
+}
+
+.cart-container {
+    width: 90%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+
+/* Whole job row */
+
+.figma-job-card {
+    width: 100%;
+    min-height: 98px;
+
+    margin-bottom: 34px;
+
+    display: grid;
+    grid-template-columns: 42% 38% 20%;
+    align-items: stretch;
+
+    border: 1px solid #9d82cd;
+    border-radius: 7px;
+
+    overflow: hidden;
+
+    background: rgba(18, 20, 57, 0.72);
+}
+
+
+/* Left white section */
+
+.figma-job-main {
+    background: white;
+    color: #12152d;
+
+    display: flex;
+    align-items: center;
+
+    padding: 10px 18px;
+    gap: 16px;
+}
+
+.figma-logo-box {
+    width: 65px;
+    height: 65px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+}
+
+.figma-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.figma-job-title {
+    min-width: 0;
+}
+
+.figma-company {
+    color: #9a55e8;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.figma-job-title h3 {
+    margin: 0;
+
+    color: #11152e;
+
+    font-size: 23px;
+    font-weight: 600;
+}
+
+
+/* Middle section */
+
+.figma-job-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 10px 14px;
+
+    gap: 8px;
+}
+
+.figma-meta-row,
+.figma-skills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.figma-meta,
+.figma-skill {
+    background: #f4f4f8;
+    color: #444963;
+
+    border-radius: 20px;
+
+    padding: 4px 10px;
+
+    font-size: 12px;
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+.figma-meta {
+    font-weight: 600;
+}
+
+
+/* Right buttons */
+
+.figma-cart-actions {
+    padding: 11px 14px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+.figma-cart-actions form {
+    margin: 0;
+}
+
+.figma-view-btn {
+    width: 100%;
+
+    display: block;
+
+    background: linear-gradient(
+        90deg,
+        #9e74f4,
+        #21c5f4
+    );
+
+    color: #10132d;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 8px 12px;
+
+    text-align: center;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    transition: transform 0.15s ease;
+}
+
+.figma-view-btn:hover {
+    color: #10132d;
+    transform: translateY(-1px);
+}
+
+.figma-remove-btn {
+    width: 100%;
+
+    background: white;
+    color: #62647a;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 7px 10px;
+
+    font-size: 11px;
+
+    transition: background 0.15s ease;
+}
+
+.figma-remove-btn:hover {
+    background: #eceaf3;
+}
+
+
+/* Empty cart */
+
+.figma-empty-cart {
+    width: 420px;
+    max-width: 100%;
+
+    margin: 120px auto 0;
+
+    background: white;
+    color: #17172d;
+
+    padding: 35px;
+
+    border-radius: 8px;
+
+    text-align: center;
+}
+
+.figma-empty-cart p {
+    color: #74758a;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .figma-job-card {
+        grid-template-columns: 1fr;
+    }
+
+    .figma-job-main {
+        border-radius: 6px 6px 0 0;
+    }
+
+    .figma-job-details {
+        padding: 14px 18px;
+    }
+
+    .figma-cart-actions {
+        padding: 0 18px 18px;
+    }
+
 }
