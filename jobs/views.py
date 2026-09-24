@@ -90,7 +90,16 @@ def show(request, id):
 
 @login_required
 def cart(request):
-    cart_items = CartItem.objects.filter(user=request.user)
+    cart_items = CartItem.objects.filter(
+        user=request.user
+    ).select_related('job')
+
+    for item in cart_items:
+        item.skills_list = [
+            skill.strip()
+            for skill in item.job.skills.split(',')
+            if skill.strip()
+        ]
 
     return render(request, 'jobs/cart.html', {
         'cart_items': cart_items

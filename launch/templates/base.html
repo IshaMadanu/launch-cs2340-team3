@@ -23,7 +23,10 @@
     <!-- Header -->
     <nav class="navbar navbar-expand-lg bg-light">
       <div class="container">
-        <a class="navbar-brand" href="/">Launch</a>
+        <a class="navbar-brand launch-brand" href="/">
+            <img src="{% static 'img/logo.svg' %}" alt="Launch logo">
+            <span>Launch</span>
+        </a>
         <div class="navbar-nav">
           <a class="nav-link" href="{% url 'jobs.index' %}">
             Jobs
@@ -37,7 +40,7 @@
       </div>
     </nav>
     <!-- Header -->
-     
+
     <!-- Page Content -->
     {% block content %}
     {% endblock content %}
