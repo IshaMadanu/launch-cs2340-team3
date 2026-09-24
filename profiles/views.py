@@ -19,7 +19,7 @@ def profile_detail(request, username=None):
     """
     if username is None:
         if not request.user.is_authenticated:
-            return redirect("login")
+            return redirect("accounts.login")
         profile = get_object_or_404(Profile, user__username=request.user.username)
     else:
         profile = get_object_or_404(Profile, user__username=username)
