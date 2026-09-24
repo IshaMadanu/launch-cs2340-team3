@@ -2,12 +2,30 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Job, CartItem
 from .forms import JobForm
+from django.core.exceptions import PermissionDenied
+from functools import wraps
+from django.contrib import messages
 
 # Create your views here.
 
 #Recruiter:
 
-@login_required
+def is_recruiter(user):
+    return user.is_superuser or (getattr(user, 'profile', None) and user.profile.role == 'recruiter')
+
+def recruiter_required(view_func):
+    @wraps(view_func)
+    @login_required
+    def wrapper(request, *args, **kwargs):
+        profile = getattr(request.user, 'profile', None)
+        if not is_recruiter(request.user):
+            messages.error(request, 'Must be a Recruiter to access this page')
+            return redirect('jobs.index')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@recruiter_required
 def recruiter_jobs(request):
     jobs = request.user.jobs.all()
 
@@ -18,7 +36,7 @@ def recruiter_jobs(request):
          'jobs': jobs}
     )
 
-@login_required
+@recruiter_required
 def create_job(request):
     if request.method == 'POST':
         form = JobForm(request.POST, request.FILES)
@@ -40,7 +58,7 @@ def create_job(request):
 
 
 
-@login_required
+@recruiter_required
 def edit_job(request, id):
     job = get_object_or_404(Job, id=id, recruiter=request.user)
 
@@ -62,7 +80,7 @@ def edit_job(request, id):
         'editing': True,
     })
 
-@login_required
+@recruiter_required
 def delete_job(request, id):
     job = get_object_or_404(Job, id=id, recruiter=request.user)
 
