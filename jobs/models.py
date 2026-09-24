@@ -20,3 +20,23 @@ class Job(models.Model):
     image = models.ImageField(upload_to='job_images/')
     def __str__(self):
         return str(self.id) + ' - ' + self.title
+class CartItem(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='cart_items'
+    )
+
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='cart_items'
+    )
+
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'job')
+
+    def __str__(self):
+        return self.user.username + ' - ' + self.job.title
