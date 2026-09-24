@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Profile(models.Model):
+class Account(models.Model):
     ROLE_CHOICES = [
         ('candidate', 'Candidate'),
         ('recruiter', 'Recruiter')

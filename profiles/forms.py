@@ -6,6 +6,7 @@ from .models import Education, Link, Profile, Skill, WorkExperience
 
 class ProfileForm(forms.ModelForm):
     class Meta:
+        CHOICES = [('one', 'One'), ('two', 'Two')]
         model = Profile
         fields = ["name", "headline", "bio"]
         widgets = {
