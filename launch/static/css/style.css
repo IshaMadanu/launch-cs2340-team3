@@ -3,3 +3,7 @@
     fixed;
   background-size: 100% auto;
 }
+
+.bg-dark {
+  background-color: #2E2E2E !important;
+}
