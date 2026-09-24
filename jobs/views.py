@@ -5,6 +5,8 @@ from .forms import JobForm
 
 # Create your views here.
 
+#Recruiter:
+
 @login_required
 def recruiter_jobs(request):
     jobs = request.user.jobs.all()
@@ -12,26 +14,29 @@ def recruiter_jobs(request):
     return render(
         request, 
         'jobs/recruiter_jobs.html',
-        {'jobs': jobs}
+        {'title' : 'Job Postings',
+         'jobs': jobs}
     )
 
 @login_required
 def create_job(request):
     if request.method == 'POST':
         form = JobForm(request.POST, request.FILES)
+
         if form.is_valid():
             job = form.save(commit=False)
             job.recruiter = request.user
             job.save()
-            return redirect('jobs.index')
-        else: 
-            form = JobForm() 
+            return redirect('jobs.recruiter')
+    else: 
+        form = JobForm() 
         jobs = Job.objects.all()
-        return render(request, 'jobs/index.html', {
-            'jobs': jobs,
-            'forms' : form,
-            'creating' : True
-        })
+    return render(request, 'jobs/job_form.html', {
+        'jobs': jobs,
+        'form' : form,
+        'page_title': 'Post a Job',
+        'editing': False,
+    })
 
 
 
@@ -51,11 +56,10 @@ def edit_job(request, id):
 
     jobs = Job.objects.all()
 
-    return render(request, 'jobs/index.html', {
+    return render(request, 'jobs/job_form.html', {
         'jobs': jobs,
         'form': form,
         'editing': True,
-        'editing_job': job
     })
 
 @login_required
@@ -65,9 +69,9 @@ def delete_job(request, id):
     if request.method == 'POST':
         job.delete()
 
-    return redirect('jobs.index')
+    return redirect('jobs.recruiter')
 
-
+#Both:
 
 def index(request):
     template_data = {}
