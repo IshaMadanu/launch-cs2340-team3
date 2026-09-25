@@ -14,15 +14,12 @@ from .models import Profile
 
 def profile_detail(request, username=None):
     """
-    Public-facing view of a profile. If no username is given, show the
-    logged-in user's own profile.
+    If user is not authenticated, redirect to the login page. Otherwise, go to profile.
     """
-    if username is None:
-        if not request.user.is_authenticated:
-            return redirect("accounts.login")
-        profile = get_object_or_404(Profile, user__username=request.user.username)
+    if not request.user.is_authenticated:
+        return redirect("accounts.login")
     else:
-        profile = get_object_or_404(Profile, user__username=username)
+        profile = get_object_or_404(Profile, user__username=request.user.username)
 
     return render(request, "profiles/profile_detail.html", {"profile": profile})
 
@@ -30,12 +27,18 @@ def profile_detail(request, username=None):
 @login_required
 def profile_edit(request):
     """
-    Create-or-update view for the logged-in user's own profile, including
-    all related work experience, education, skills, and links via formsets.
+    Get the user's profile and uses it to fill out fields on the edit profile page.
+    Allows users to update their profile and renders the updated page.
     """
     profile, _ = Profile.objects.get_or_create(
         user=request.user, defaults={"name": request.user.get_full_name() or request.user.username}
     )
+
+    form = ProfileForm(instance=profile)
+    work_formset = WorkExperienceFormSet(instance=profile, prefix="work")
+    edu_formset = EducationFormSet(instance=profile, prefix="edu")
+    skill_formset = SkillFormSet(instance=profile, prefix="skill")
+    link_formset = LinkFormSet(instance=profile, prefix="link")
 
     if request.method == "POST":
         form = ProfileForm(request.POST, request.FILES, instance=profile)
@@ -47,17 +50,11 @@ def profile_edit(request):
         formsets = [work_formset, edu_formset, skill_formset, link_formset]
 
         if form.is_valid() and all(fs.is_valid() for fs in formsets):
-            form.save()
             for fs in formsets:
                 fs.save()
+            form.save()
             messages.success(request, "Profile saved.")
             return redirect("profiles:detail")
-    else:
-        form = ProfileForm(instance=profile)
-        work_formset = WorkExperienceFormSet(instance=profile, prefix="work")
-        edu_formset = EducationFormSet(instance=profile, prefix="edu")
-        skill_formset = SkillFormSet(instance=profile, prefix="skill")
-        link_formset = LinkFormSet(instance=profile, prefix="link")
 
     return render(
         request,

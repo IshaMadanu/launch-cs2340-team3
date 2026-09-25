@@ -18,8 +18,10 @@ class Job(models.Model):
     location = models.TextField()
     description = models.TextField()
     image = models.ImageField(upload_to='job_images/')
+
     def __str__(self):
         return str(self.id) + ' - ' + self.title
+
 class CartItem(models.Model):
     user = models.ForeignKey(
         User,
