@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Job, CartItem
+from .models import Job, CartItem, Application
 from .forms import JobForm
 from django.core.exceptions import PermissionDenied
 from functools import wraps
@@ -149,3 +149,14 @@ def remove_from_cart(request, id):
         cart_item.delete()
 
     return redirect('jobs.cart')
+
+@login_required
+def apply(request, id):
+    if request.method == 'POST':
+        job = Job.objects.get(id=id)
+        application = Application()
+        application.note = request.POST['note']
+        application.job = job
+        application.user = request.user
+        application.save()
+    return redirect('jobs.show', id=id)

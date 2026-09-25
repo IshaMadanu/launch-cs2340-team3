@@ -16,5 +16,8 @@ urlpatterns = [
     path('<int:id>/edit/', views.edit_job, name='jobs.edit'),
     path('<int:id>/delete/', views.delete_job, name='jobs.delete'),
     path('<int:id>/', views.show, name='jobs.show'),
+
+    # Application
+    path('<int:id>/apply/', views.apply, name='jobs.apply'),
 ]
 
