@@ -1,39 +1,30 @@
 from django import forms
-from django.forms import inlineformset_factory
 
-from .models import Education, Link, Profile, Skill, WorkExperience
+from .models import Education, Link, Profile, Project, Skill, WorkExperience
 
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        CHOICES = [('one', 'One'), ('two', 'Two')]
         model = Profile
-        fields = ["name", "headline", "bio"]
-        widgets = {
-            "bio": forms.Textarea(attrs={"rows": 6, "placeholder" : "Tell use a little bit about yourself!"}),
-            "headline" : forms.TextInput(attrs={"placeholder" : "CS Student @ Georgia Tech Interested in AI and Robotics"}),
-        }
+        fields = ["name", "headline", "bio", "location"]
 
 
 class WorkExperienceForm(forms.ModelForm):
     class Meta:
         model = WorkExperience
         fields = ["company", "title", "start_date", "end_date", "description"]
-        widgets = {
-            "start_date": forms.DateInput(attrs={"type": "date"}),
-            "end_date": forms.DateInput(attrs={"type": "date"}),
-            "description": forms.Textarea(attrs={"rows": 3}),
-        }
 
 
 class EducationForm(forms.ModelForm):
     class Meta:
         model = Education
-        fields = ["institution", "degree", "field_of_study", "start_date", "end_date"]
-        widgets = {
-            "start_date": forms.DateInput(attrs={"type": "date"}),
-            "end_date": forms.DateInput(attrs={"type": "date"}),
-        }
+        fields = [
+            "institution",
+            "degree",
+            "field_of_study",
+            "start_date",
+            "end_date",
+        ]
 
 
 class SkillForm(forms.ModelForm):
@@ -42,13 +33,19 @@ class SkillForm(forms.ModelForm):
         fields = ["name"]
 
 
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ["name", "description"]
+
+
 class LinkForm(forms.ModelForm):
     class Meta:
         model = Link
         fields = ["label", "url"]
 
 
-WorkExperienceFormSet = inlineformset_factory(
+WorkExperienceFormSet = forms.inlineformset_factory(
     Profile,
     WorkExperience,
     form=WorkExperienceForm,
@@ -56,7 +53,7 @@ WorkExperienceFormSet = inlineformset_factory(
     can_delete=True,
 )
 
-EducationFormSet = inlineformset_factory(
+EducationFormSet = forms.inlineformset_factory(
     Profile,
     Education,
     form=EducationForm,
@@ -64,7 +61,7 @@ EducationFormSet = inlineformset_factory(
     can_delete=True,
 )
 
-SkillFormSet = inlineformset_factory(
+SkillFormSet = forms.inlineformset_factory(
     Profile,
     Skill,
     form=SkillForm,
@@ -72,7 +69,15 @@ SkillFormSet = inlineformset_factory(
     can_delete=True,
 )
 
-LinkFormSet = inlineformset_factory(
+ProjectFormSet = forms.inlineformset_factory(
+    Profile,
+    Project,
+    form=ProjectForm,
+    extra=1,
+    can_delete=True,
+)
+
+LinkFormSet = forms.inlineformset_factory(
     Profile,
     Link,
     form=LinkForm,

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -13,6 +14,10 @@ class Profile(models.Model):
         blank=True,
     )
     bio = models.TextField(blank=True)
+    location = models.CharField(
+        max_length=150,
+        blank=True,
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -70,6 +75,17 @@ class Skill(models.Model):
                 fields=["profile", "name"], name="unique_skill_per_profile"
             )
         ]
+
+    def __str__(self):
+        return self.name
+
+
+class Project(models.Model):
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="projects"
+    )
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name

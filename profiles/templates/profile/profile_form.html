@@ -6,7 +6,6 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
 
-
   <div class="container">
     <div class="card shadow p-3 mb-4 rounded">
       <div class="card-body">
@@ -35,7 +34,9 @@
             {% endfor %}
           </div>
 
-          <button type="button" class="btn bg-dark text-white" id="add-work-form">+ Add another job</button>
+          <button type="button" class="btn bg-dark text-white" id="add-work-form">
+            + Add another job
+          </button>
 
           <template id="work-empty-form">
             <div class="formset-row">
@@ -53,6 +54,7 @@
         <fieldset class="profile-widget text-center">
           <legend>Education</legend>
           {{ edu_formset.management_form }}
+
           <div id="edu-formset-rows">
             {% for f in edu_formset %}
               <div class="formset-row">
@@ -62,7 +64,11 @@
               </div>
             {% endfor %}
           </div>
-          <button type="button" class="btn bg-dark text-white" id="add-edu-form">+ Add additional education</button>
+
+          <button type="button" class="btn bg-dark text-white" id="add-edu-form">
+            + Add additional education
+          </button>
+
           <template id="edu-empty-form">
             <div class="formset-row">
               {{ edu_formset.empty_form.as_p }}
@@ -79,6 +85,7 @@
         <fieldset class="profile-widget text-center">
           <legend>Skills</legend>
           {{ skill_formset.management_form }}
+
           {% for f in skill_formset %}
             <div class="formset-row">
               {{ f.id }}
@@ -95,8 +102,40 @@
     <div class="card shadow p-3 mb-4 rounded">
       <div class="card-body">
         <fieldset class="profile-widget text-center">
+          <legend>Projects</legend>
+          {{ project_formset.management_form }}
+
+          <div id="project-formset-rows">
+            {% for f in project_formset %}
+              <div class="formset-row">
+                {{ f.id }}
+                {{ f.as_p }}
+                {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <button type="button" class="btn bg-dark text-white" id="add-project-form">
+            + Add another project
+          </button>
+
+          <template id="project-empty-form">
+            <div class="formset-row">
+              {{ project_formset.empty_form.as_p }}
+            </div>
+          </template>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card shadow p-3 mb-4 rounded">
+      <div class="card-body">
+        <fieldset class="profile-widget text-center">
           <legend>Links</legend>
           {{ link_formset.management_form }}
+
           {% for f in link_formset %}
             <div class="formset-row">
               {{ f.id }}
@@ -131,6 +170,17 @@
     const newFormHtml = template.replace(/__prefix__/g, formIndex);
 
     document.getElementById('edu-formset-rows').insertAdjacentHTML('beforeend', newFormHtml);
+    totalForms.value = formIndex + 1;
+  });
+
+  document.getElementById('add-project-form').addEventListener('click', function () {
+    const totalForms = document.getElementById('id_project-TOTAL_FORMS');
+    const formIndex = parseInt(totalForms.value, 10);
+
+    const template = document.getElementById('project-empty-form').innerHTML;
+    const newFormHtml = template.replace(/__prefix__/g, formIndex);
+
+    document.getElementById('project-formset-rows').insertAdjacentHTML('beforeend', newFormHtml);
     totalForms.value = formIndex + 1;
   });
   </script>

@@ -57,6 +57,15 @@ class CartItem(models.Model):
     def __str__(self):
         return self.user.username + ' - ' + self.job.title
 
+class Application(models.Model):
+    id = models.AutoField(primary_key=True)
+    note = models.TextField(max_length=500)
+    date = models.DateTimeField(auto_now_add=True)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.id) + ' - ' + self.job.title
 class Report(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
