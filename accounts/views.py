@@ -23,21 +23,34 @@ def logout(request):
 def login(request):
     template_data = {}
     template_data['title'] = 'Login'
+
     if request.method == 'GET':
-        return render(request, 'accounts/login.html',
-            {'template_data': template_data})
+        return render(
+            request,
+            'accounts/login.html',
+            {'template_data': template_data}
+        )
+
     elif request.method == 'POST':
         user = authenticate(
             request,
-            username = request.POST['username'],
-            password = request.POST['password']
+            username=request.POST['username'],
+            password=request.POST['password']
         )
+
         if user is None:
             template_data['error'] = 'The username or password is incorrect.'
-            return render(request, 'accounts/login.html',
-                {'template_data': template_data})
+            return render(
+                request,
+                'accounts/login.html',
+                {'template_data': template_data}
+            )
+
         else:
             auth_login(request, user)
+            next_url = request.POST.get('next') or request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('home.index')
 
 def signup(request):

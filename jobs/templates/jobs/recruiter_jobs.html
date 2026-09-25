@@ -23,6 +23,9 @@
             <p>${{ job.salary }}</p>
           </div>
           <div class="job-card-actions">
+            <a href="{% url 'jobs.applicants' job.id %}" class="btn btn-primary">
+              View Applicants
+            </a>
             <a href="{% url 'jobs.edit' job.id %}" class="btn btn-secondary">Edit</a>
             <form action="{% url 'jobs.delete' job.id %}" method="POST" onsubmit="return confirm('Delete this job posting?');">
               {% csrf_token %}

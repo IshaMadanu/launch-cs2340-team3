@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Applicants</h1>
+            <p class="text-muted">{{ job.title }}</p>
+        </div>
+
+        <a href="{% url 'jobs.recruiter' %}" class="btn btn-secondary">
+            Back to Job Postings
+        </a>
+    </div>
+
+    {% if applications %}
+        <div class="list-group">
+            {% for application in applications %}
+                <a
+                    href="{% url 'jobs.applicant_detail' job.id application.id %}"
+                    class="list-group-item list-group-item-action"
+                >
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-1">
+                            {{ application.user.profile.name }}
+                        </h5>
+
+                        <small>
+                            {{ application.date|date:"M d, Y" }}
+                        </small>
+                    </div>
+
+                    {% if application.user.profile.headline %}
+                        <p class="mb-1">
+                            {{ application.user.profile.headline }}
+                        </p>
+                    {% endif %}
+
+                    {% if application.note %}
+                        <small>
+                            Application note: {{ application.note|truncatewords:20 }}
+                        </small>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No applicants yet.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

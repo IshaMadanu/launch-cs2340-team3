@@ -5,13 +5,18 @@ from .forms import JobForm
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from django.contrib import messages
+from django.db.models import Q
+from profiles.models import Profile
 
 # Create your views here.
 
 #Recruiter:
 
 def is_recruiter(user):
-    return user.is_superuser or (getattr(user, 'profile', None) and user.profile.role == 'recruiter')
+    account = getattr(user, 'account', None)
+    return user.is_superuser or (
+        account is not None and account.role == 'recruiter'
+    )
 
 def recruiter_required(view_func):
     @wraps(view_func)
@@ -35,6 +40,36 @@ def recruiter_jobs(request):
         {'title' : 'Job Postings',
          'jobs': jobs}
     )
+
+@recruiter_required
+def job_applicants(request, id):
+    job = get_object_or_404(Job, id=id, recruiter=request.user)
+
+    applications = (
+        Application.objects
+        .filter(job=job)
+        .select_related('user', 'user__profile')
+    )
+
+    return render(request, 'jobs/job_applicants.html', {
+        'job': job,
+        'applications': applications,
+    })
+
+
+@recruiter_required
+def applicant_detail(request, id, application_id):
+    application = get_object_or_404(
+        Application.objects.select_related('user', 'user__profile'),
+        id=application_id,
+        job__id=id,
+        job__recruiter=request.user,
+    )
+
+    return render(request, 'jobs/applicant_detail.html', {
+        'application': application,
+        'profile': application.user.profile,
+    })    
 
 @recruiter_required
 def create_job(request):
@@ -160,3 +195,50 @@ def apply(request, id):
         application.user = request.user
         application.save()
     return redirect('jobs.show', id=id)
+
+@recruiter_required
+def candidate_search(request):
+    """
+    Lets a recruiter search candidate profiles by skill, project,
+    location, headline, bio, work experience, or education.
+    """
+    query = request.GET.get("q", "").strip()
+    location = request.GET.get("location", "").strip()
+
+    results = Profile.objects.all()
+
+    if query:
+        results = results.filter(
+            Q(skills__name__icontains=query)
+            | Q(projects__name__icontains=query)
+            | Q(projects__description__icontains=query)
+            | Q(headline__icontains=query)
+            | Q(bio__icontains=query)
+            | Q(work_experiences__company__icontains=query)
+            | Q(work_experiences__description__icontains=query)
+            | Q(educations__institution__icontains=query)
+        )
+
+    if location:
+        results = results.filter(location__icontains=location)
+
+    results = (
+        results
+        .distinct()
+        .prefetch_related(
+            "skills",
+            "projects",
+            "educations",
+            "work_experiences",
+        )
+    )
+
+    return render(
+        request,
+        "jobs/candidate_search.html",
+        {
+            "query": query,
+            "location": location,
+            "results": results,
+        },
+    )

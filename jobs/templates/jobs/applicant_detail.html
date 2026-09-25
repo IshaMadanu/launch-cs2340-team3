@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>{{ profile.name }}</h1>
+            {% if profile.headline %}
+                <p class="text-muted mb-0">{{ profile.headline }}</p>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'jobs.applicants' application.job.id %}"
+           class="btn btn-secondary">
+            Back to Applicants
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Candidate Profile -->
+        <div class="col-md-7">
+
+            {% if profile.bio %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4">About</h2>
+                    <p>{{ profile.bio|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if profile.work_experiences.all %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4">Work Experience</h2>
+
+                    {% for job in profile.work_experiences.all %}
+                        <div class="mb-3">
+                            <h3 class="h5 mb-1">
+                                {{ job.title }} &middot; {{ job.company }}
+                            </h3>
+
+                            <p class="text-muted mb-1">
+                                {{ job.start_date|date:"M Y" }} &ndash;
+                                {% if job.end_date %}
+                                    {{ job.end_date|date:"M Y" }}
+                                {% else %}
+                                    Present
+                                {% endif %}
+                            </p>
+
+                            {% if job.description %}
+                                <p>{{ job.description|linebreaks }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if profile.educations.all %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4">Education</h2>
+
+                    {% for edu in profile.educations.all %}
+                        <div class="mb-3">
+                            <h3 class="h5 mb-1">{{ edu.institution }}</h3>
+
+                            <p class="mb-1">
+                                {{ edu.degree }}
+                                {% if edu.field_of_study %}
+                                    , {{ edu.field_of_study }}
+                                {% endif %}
+                            </p>
+
+                            {% if edu.start_date %}
+                                <p class="text-muted">
+                                    {{ edu.start_date|date:"Y" }}
+                                    {% if edu.end_date %}
+                                        &ndash; {{ edu.end_date|date:"Y" }}
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if profile.skills.all %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4">Skills</h2>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for skill in profile.skills.all %}
+                            <span class="badge bg-light text-dark border">
+                                {{ skill.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if profile.links.all %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4">Links</h2>
+
+                    <ul class="mb-0">
+                        {% for link in profile.links.all %}
+                            <li>
+                                <a href="{{ link.url }}"
+                                   target="_blank"
+                                   rel="noopener">
+                                    {{ link.label }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Application Details -->
+        <div class="col-md-5">
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h4">Application Details</h2>
+
+                    <p>
+                        <strong>Position:</strong><br>
+                        {{ application.job.title }}
+                    </p>
+
+                    <p>
+                        <strong>Location:</strong><br>
+                        {{ application.job.location }}
+                    </p>
+
+                    <p>
+                        <strong>Applied:</strong><br>
+                        {{ application.date|date:"M d, Y" }}
+                    </p>
+
+                    {% if application.note %}
+                    <div>
+                        <strong>Application Note:</strong>
+
+                        <div class="border rounded p-3 mt-2">
+                            {{ application.note|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
