@@ -1,32 +1,70 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="job-form-container">
-  <h1>{{ page_title }}</h1>
+
+<div class="job-form-page">
+  <h1 class="job-form-heading"><span>Broadcast</span> your opportunity!</h1>
 
   <form method="POST" enctype="multipart/form-data" class="job-form">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
-      <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      <div class="alert-error">{{ form.non_field_errors }}</div>
     {% endif %}
 
-    {% for field in form %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.errors %}
-          <div class="field-error">{{ field.errors }}</div>
-        {% endif %}
+    <div class="form-row cols-1">
+      <div class="form-field">
+        {{ form.title.label_tag }}
+        {{ form.title }}
       </div>
+    </div>
+
+    <div class="form-row cols-4">
+      <div class="form-field">
+        {{ form.salary.label_tag }}
+        {{ form.salary }}
+      </div>
+
+      <div class="form-field">
+        {{ form.location.label_tag }}
+        {{ form.location }}
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="form-field">
+        {{ form.skills.label_tag }}
+        {{ form.skills }}
+      </div>
+      <div class="form-field">
+        {{ form.address.label_tag }}
+        {{ form.address }}
+      </div>
+    </div>
+
+    <div class="form-row cols-2">
+      <div class="form-field">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+      </div>
+    </div>
+
+    {% for field in form %}
+      {% if field.name not in "title,salary,location,skills,address,description" %}
+        <div class="form-row cols-1">
+          <div class="form-field">
+            {{ field.label_tag }}
+            {{ field }}
+          </div>
+        </div>
+      {% endif %}
     {% endfor %}
 
     <div class="job-form-actions">
-      <button type="submit" class="btn btn-primary">
-        {% if editing %}Save Changes{% else %}Submit{% endif %}
+      <button type="submit" class="btn-post">
+        {% if editing %}Save Changes{% else %}Post{% endif %}
       </button>
-      <a href="{% url 'jobs.recruiter' %}" class="btn btn-secondary">Cancel</a>
+      <a href="{% url 'jobs.recruiter' %}" class="btn-cancel">Cancel</a>
     </div>
   </form>
 </div>
+
 {% endblock %}

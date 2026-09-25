@@ -67,7 +67,9 @@ def signup(request):
 
             Account.objects.create(
                 user=user,
-                role=form.cleaned_data['role']
+                role=form.cleaned_data['role'],
+                company_name=form.cleaned_data.get('company_name'),
+                company_email=form.cleaned_data.get('company_email'),
             )
             
             return redirect('accounts.login')

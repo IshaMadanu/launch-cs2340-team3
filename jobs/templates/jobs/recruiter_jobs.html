@@ -1,42 +1,47 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<div class="recruiter-dashboard">
-  <div class="recruiter-dashboard-header">
+<div class="job-search">
+  <div class="container">
     <h1>{{ title }}</h1>
-    <a href="{% url 'jobs.create' %}" class="btn btn-primary">Post a Job</a>
+    <a href="{% url 'jobs.create' %}" class="btn btn-light mb-3">
+      Post a Job
+    </a>
   </div>
+</div>
 
+<div class="container">
   {% if messages %}
     {% for message in messages %}
       <div class="alert">{{ message }}</div>
     {% endfor %}
   {% endif %}
 
-  {% if jobs %}
-    <div class="job-list">
-      {% for job in jobs %}
-        <div class="job-card">
-          <div class="job-card-info">
-            <h3><a href="{% url 'jobs.show' job.id %}">{{ job.title }}</a></h3>
-            <p>{{ job.location }}</p>
-            <p>${{ job.salary }}</p>
-          </div>
-          <div class="job-card-actions">
-            <a href="{% url 'jobs.applicants' job.id %}" class="btn btn-primary">
-              View Applicants
+  <div class="row">
+    {% for job in jobs %}
+      <div class="col-md-4 col-lg-3 mb-2">
+        <div class="p-2 card align-items-center pt-4">
+          <img src="{{ job.image.url }}" class="card-img-top rounded img-card-200">
+          <div class="card-body text-center">
+            <a href="{% url 'jobs.show' job.id %}" class="btn bg-dark text-white">
+              {{ job.title }}
             </a>
-            <a href="{% url 'jobs.edit' job.id %}" class="btn btn-secondary">Edit</a>
-            <form action="{% url 'jobs.delete' job.id %}" method="POST" onsubmit="return confirm('Delete this job posting?');">
+            <p class="mt-2 mb-0">{{ job.location }}</p>
+            <p class="mb-2">${{ job.salary }}</p>
+            <a href="{% url 'jobs.edit' job.id %}" class="btn btn-secondary">
+              Edit
+            </a>
+            <form action="{% url 'jobs.delete' job.id %}" method="POST"
+                  onsubmit="return confirm('Delete this job posting?');"
+                  class="d-inline">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger">Delete</button>
             </form>
           </div>
         </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>You haven't posted any jobs yet.</p>
-  {% endif %}
+      </div>
+    {% empty %}
+      <p>You haven't posted any jobs yet.</p>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

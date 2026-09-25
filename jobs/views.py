@@ -13,16 +13,13 @@ from profiles.models import Profile
 #Recruiter:
 
 def is_recruiter(user):
-    account = getattr(user, 'account', None)
-    return user.is_superuser or (
-        account is not None and account.role == 'recruiter'
-    )
+    return user.is_superuser or (getattr(user, 'account', None) and user.account.role == 'recruiter')
 
 def recruiter_required(view_func):
     @wraps(view_func)
     @login_required
     def wrapper(request, *args, **kwargs):
-        profile = getattr(request.user, 'profile', None)
+        account = getattr(request.user, 'account', None)
         if not is_recruiter(request.user):
             messages.error(request, 'Must be a Recruiter to access this page')
             return redirect('jobs.index')
@@ -127,11 +124,46 @@ def delete_job(request, id):
 #Both:
 
 def index(request):
-    template_data = {}
-    template_data['title'] = 'Jobs'
-    template_data['jobs'] = Job.objects.all()
-    return render(request, 'jobs/index.html',
-                  {'template_data': template_data})
+    jobs = Job.objects.all()
+
+    search = request.GET.get('search', '')
+    location = request.GET.get('location', '')
+    min_salary = request.GET.get('min_salary', '')
+    max_salary = request.GET.get('max_salary', '')
+    work_type = request.GET.get('work_type', '')
+    visa = request.GET.get('visa', '')
+
+    if search:
+        jobs = jobs.filter(
+            Q(title__icontains=search) |
+            Q(skills__icontains=search)
+        )
+
+    if location:
+        jobs = jobs.filter(location__icontains=location)
+
+    if min_salary:
+        jobs = jobs.filter(salary__gte=min_salary)
+
+    if max_salary:
+        jobs = jobs.filter(salary__lte=max_salary)
+
+    if work_type:
+        jobs = jobs.filter(work_type=work_type)
+
+    if visa == 'yes':
+        jobs = jobs.filter(visa_sponsorship=True)
+    elif visa == 'no':
+        jobs = jobs.filter(visa_sponsorship=False)
+
+    template_data = {
+        'title': 'Jobs',
+        'jobs': jobs,
+    }
+
+    return render(request, 'jobs/index.html', {
+        'template_data': template_data
+    })
 
 def show(request, id):
     job = Job.objects.get(id=id)
