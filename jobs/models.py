@@ -35,7 +35,7 @@ class Job(models.Model):
 
     def __str__(self):
         return str(self.id) + ' - ' + self.title
-        
+
 class CartItem(models.Model):
     user = models.ForeignKey(
         User,
@@ -56,3 +56,46 @@ class CartItem(models.Model):
 
     def __str__(self):
         return self.user.username + ' - ' + self.job.title
+
+class Report(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('dismissed', 'Dismissed'),
+    ]
+
+    reporter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='submitted_reports'
+    )
+
+    reported_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reports_received',
+        null=True,
+        blank=True
+    )
+
+    reported_job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='reports_received',
+        null=True,
+        blank=True
+    )
+
+    reason = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.reason
