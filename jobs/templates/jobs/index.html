@@ -9,7 +9,7 @@
     <p>
       Search for opportunities that match your skills and preferences.
     </p>
-    {% if request.user.account.role == 'recruiter' %}
+    {% if request.user.profile.role == 'recruiter' %}
       <a href="{% url 'jobs.create' %}" class="btn btn-light mb-3">
         Create Job Post
       </a>
