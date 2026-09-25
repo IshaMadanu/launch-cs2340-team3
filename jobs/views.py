@@ -12,13 +12,13 @@ from django.db.models import Q
 #Recruiter:
 
 def is_recruiter(user):
-    return user.is_superuser or (getattr(user, 'profile', None) and user.profile.role == 'recruiter')
+    return user.is_superuser or (getattr(user, 'account', None) and user.account.role == 'recruiter')
 
 def recruiter_required(view_func):
     @wraps(view_func)
     @login_required
     def wrapper(request, *args, **kwargs):
-        profile = getattr(request.user, 'profile', None)
+        account = getattr(request.user, 'account', None)
         if not is_recruiter(request.user):
             messages.error(request, 'Must be a Recruiter to access this page')
             return redirect('jobs.index')

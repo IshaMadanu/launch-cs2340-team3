@@ -10,10 +10,51 @@
             <hr />
             <form method="POST">
               {% csrf_token %}
-              {{ template_data.form.as_p }}
-              <button type="submit"
-                class="btn bg-dark text-white">Sign Up
-              </button>
+
+              <div class="mb-3">
+                {{ template_data.form.username.label_tag }}
+                {{ template_data.form.username }}
+                {{ template_data.form.username.errors }}
+              </div>
+ 
+              <div class="mb-3">
+                {{ template_data.form.email.label_tag }}
+                {{ template_data.form.email }}
+                {{ template_data.form.email.errors }}
+              </div>
+ 
+              <div class="mb-3">
+                {{ template_data.form.password1.label_tag }}
+                {{ template_data.form.password1 }}
+                {{ template_data.form.password1.errors }}
+              </div>
+ 
+              <div class="mb-3">
+                {{ template_data.form.password2.label_tag }}
+                {{ template_data.form.password2 }}
+                {{ template_data.form.password2.errors }}
+              </div>
+ 
+              <div class="mb-3">
+                {{ template_data.form.role.label_tag }}
+                {{ template_data.form.role }}
+                {{ template_data.form.role.errors }}
+              </div>
+ 
+              <div id="company-fields" style="display: none;">
+                <div class="mb-3">
+                  {{ template_data.form.company_name.label_tag }}
+                  {{ template_data.form.company_name }}
+                  {{ template_data.form.company_name.errors }}
+                </div>
+ 
+                <div class="mb-3">
+                  {{ template_data.form.company_email.label_tag }}
+                  {{ template_data.form.company_email }}
+                  {{ template_data.form.company_email.errors }}
+                </div>
+              </div>
+              <button type="submit" class="btn bg-dark text-white">Sign Up</button>
             </form>
           </div>
         </div>
@@ -21,4 +62,17 @@
     </div>
   </div>
 </div>
+
+<script>
+  const roleSelect = document.getElementById('id_role');
+  const companyFields = document.getElementById('company-fields');
+ 
+  function toggleCompanyFields() {
+    companyFields.style.display = roleSelect.value === 'recruiter' ? 'block' : 'none';
+  }
+ 
+  roleSelect.addEventListener('change', toggleCompanyFields);
+  toggleCompanyFields(); // run on load in case of a validation error re-render with recruiter already selected
+</script>
+
 {% endblock content %}
