@@ -1,23 +1,81 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-<div class="p-3">
+<div class="job-search">
   <div class="container">
-    <div class="row mt-3">
-
-      <div class="launch-hero">
-        <h1 class="launch-hero-title">
-          Your career is about to <span class="accent">take off...</span>
-        </h1>
-        <p class="launch-hero-subtitle">Check out your most recommended roles and apply with one click!</p>
-      </div>
-      
-    {% if request.user.profile.role == 'recruiter' %}
-    <a href="{% url 'jobs.create' %}" class="btn btn-primary">
+    <h1>
+      Your career is about to <span>take off...</span>
+    </h1>
+    <p>
+      Search for opportunities that match your skills and preferences.
+    </p>
+    {% if request.user.account.role == 'recruiter' %}
+      <a href="{% url 'jobs.create' %}" class="btn btn-light mb-3">
         Create Job Post
-    </a>
+      </a>
     {% endif %}
+    <form method="GET" action="{% url 'jobs.index' %}">
+      <div class="job-main-search">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search for job titles or skills..."
+          value="{{ request.GET.search }}">
+        <button type="submit">
+          Find Jobs
+        </button>
+      </div>
+      <div class="job-filters">
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          value="{{ request.GET.location }}">
+        <input
+          type="number"
+          name="min_salary"
+          placeholder="Min salary"
+          value="{{ request.GET.min_salary }}">
+        <input
+          type="number"
+          name="max_salary"
+          placeholder="Max salary"
+          value="{{ request.GET.max_salary }}">
+        <select name="work_type">
+          <option value="">Work type</option>
+          <option value="remote"
+            {% if request.GET.work_type == 'remote' %}selected{% endif %}>
+            Remote
+          </option>
+          <option value="onsite"
+            {% if request.GET.work_type == 'onsite' %}selected{% endif %}>
+            On-site
+          </option>
+          <option value="hybrid"
+            {% if request.GET.work_type == 'hybrid' %}selected{% endif %}>
+            Hybrid
+          </option>
+        </select>
+        <select name="visa">
+          <option value="">Visa sponsorship</option>
+          <option value="yes"
+            {% if request.GET.visa == 'yes' %}selected{% endif %}>
+            Sponsorship Available
+          </option>
+          <option value="no"
+            {% if request.GET.visa == 'no' %}selected{% endif %}>
+            No Sponsorship
+          </option>
+        </select>
+        <a href="{% url 'jobs.index' %}" class="clear-filters">
+          Clear
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
 
+  <div class="container">
     {% if creating or editing %}
       <div class="card mb-4">
         <div class="card-body"> 
@@ -66,9 +124,6 @@
         </div>
       </div>
       {% endfor %}
-
-
     </div>
   </div>
-</div>
 {% endblock content %}

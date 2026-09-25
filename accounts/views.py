@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
-from .models import Profile
+from .models import Account
 
 
 class CustomErrorList(ErrorList):
@@ -52,9 +52,11 @@ def signup(request):
         if form.is_valid():
             user = form.save()
 
-            Profile.objects.create(
+            Account.objects.create(
                 user=user,
-                role=form.cleaned_data['role']
+                role=form.cleaned_data['role'],
+                company_name=form.cleaned_data.get('company_name'),
+                company_email=form.cleaned_data.get('company_email'),
             )
             
             return redirect('accounts.login')

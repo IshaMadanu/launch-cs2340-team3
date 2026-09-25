@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Profile(models.Model):
+class Account(models.Model):
     ROLE_CHOICES = [
         ('candidate', 'Candidate'),
         ('recruiter', 'Recruiter')
@@ -15,6 +15,9 @@ class Profile(models.Model):
         choices=ROLE_CHOICES,
         default='candidate'
     )
+
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    company_email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"

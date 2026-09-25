@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Profile</h1>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+
+  <div class="container">
+    <div class="card shadow p-3 mb-4 rounded">
+      <div class="card-body">
+        <fieldset class="profile-widget text-center">
+          <legend>Basics</legend>
+          {{ form.as_p }}
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card shadow p-3 mb-4 rounded">
+      <div class="card-body">
+        <fieldset class="profile-widget text-center">
+          <legend>Work Experience</legend>
+          {{ work_formset.management_form }}
+
+          <div id="work-formset-rows">
+            {% for f in work_formset %}
+              <div class="formset-row">
+                {{ f.id }}
+                {{ f.as_p }}
+                {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <button type="button" class="btn bg-dark text-white" id="add-work-form">+ Add another job</button>
+
+          <template id="work-empty-form">
+            <div class="formset-row">
+              {{ work_formset.empty_form.as_p }}
+            </div>
+          </template>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card shadow p-3 mb-4 rounded">
+      <div class="card-body">
+        <fieldset class="profile-widget text-center">
+          <legend>Education</legend>
+          {{ edu_formset.management_form }}
+          <div id="edu-formset-rows">
+            {% for f in edu_formset %}
+              <div class="formset-row">
+                {{ f.id }}
+                {{ f.as_p }}
+                {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          <button type="button" class="btn bg-dark text-white" id="add-edu-form">+ Add additional education</button>
+          <template id="edu-empty-form">
+            <div class="formset-row">
+              {{ edu_formset.empty_form.as_p }}
+            </div>
+          </template>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card shadow p-3 mb-4 rounded">
+      <div class="card-body">
+        <fieldset class="profile-widget text-center">
+          <legend>Skills</legend>
+          {{ skill_formset.management_form }}
+          {% for f in skill_formset %}
+            <div class="formset-row">
+              {{ f.id }}
+              {{ f.as_p }}
+              {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card shadow p-3 mb-4 rounded">
+      <div class="card-body">
+        <fieldset class="profile-widget text-center">
+          <legend>Links</legend>
+          {{ link_formset.management_form }}
+          {% for f in link_formset %}
+            <div class="formset-row">
+              {{ f.id }}
+              {{ f.as_p }}
+              {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn bg-dark text-white" type="submit">Save Profile</button>
+
+  <script>
+  document.getElementById('add-work-form').addEventListener('click', function () {
+    const totalForms = document.getElementById('id_work-TOTAL_FORMS');
+    const formIndex = parseInt(totalForms.value, 10);
+
+    const template = document.getElementById('work-empty-form').innerHTML;
+    const newFormHtml = template.replace(/__prefix__/g, formIndex);
+
+    document.getElementById('work-formset-rows').insertAdjacentHTML('beforeend', newFormHtml);
+    totalForms.value = formIndex + 1;
+  });
+
+  document.getElementById('add-edu-form').addEventListener('click', function () {
+    const totalForms = document.getElementById('id_edu-TOTAL_FORMS');
+    const formIndex = parseInt(totalForms.value, 10);
+
+    const template = document.getElementById('edu-empty-form').innerHTML;
+    const newFormHtml = template.replace(/__prefix__/g, formIndex);
+
+    document.getElementById('edu-formset-rows').insertAdjacentHTML('beforeend', newFormHtml);
+    totalForms.value = formIndex + 1;
+  });
+  </script>
+
+</form>
+{% endblock %}
