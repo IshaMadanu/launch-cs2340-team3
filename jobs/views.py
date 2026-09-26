@@ -6,7 +6,6 @@ from django.core.exceptions import PermissionDenied
 from functools import wraps
 from django.contrib import messages
 from django.db.models import Q
-from profiles.models import Profile
 from django.conf import settings
 
 # Create your views here.
