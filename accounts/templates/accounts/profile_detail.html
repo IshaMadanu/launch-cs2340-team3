@@ -8,7 +8,7 @@
       <p class="headline">{{ profile.headline }}</p>
     {% endif %}
     {% if request.user == profile.user %}
-      <a href="{% url 'profiles:edit' %}">Edit profile</a>
+      <a href="{% url 'edit' %}">Edit profile</a>
     {% endif %}
 
   </header>
