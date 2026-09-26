@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Job, CartItem, Application
+from accounts.models import Profile
 from .forms import JobForm
 from django.core.exceptions import PermissionDenied
 from functools import wraps
@@ -232,19 +233,16 @@ def apply(request, id):
 @recruiter_required
 def candidate_search(request):
     """
-    Lets a recruiter search candidate profiles by skill, project,
-    location, headline, bio, work experience, or education.
+    Lets a recruiter search candidate profiles by skill, headline,
+    bio, work experience, or education.
     """
     query = request.GET.get("q", "").strip()
-    location = request.GET.get("location", "").strip()
 
     results = Profile.objects.all()
 
     if query:
         results = results.filter(
             Q(skills__name__icontains=query)
-            | Q(projects__name__icontains=query)
-            | Q(projects__description__icontains=query)
             | Q(headline__icontains=query)
             | Q(bio__icontains=query)
             | Q(work_experiences__company__icontains=query)
@@ -252,15 +250,11 @@ def candidate_search(request):
             | Q(educations__institution__icontains=query)
         )
 
-    if location:
-        results = results.filter(location__icontains=location)
-
     results = (
         results
         .distinct()
         .prefetch_related(
             "skills",
-            "projects",
             "educations",
             "work_experiences",
         )
@@ -271,7 +265,6 @@ def candidate_search(request):
         "jobs/candidate_search.html",
         {
             "query": query,
-            "location": location,
             "results": results,
         },
     )

@@ -29,8 +29,14 @@
         </a>
         <div class="navbar-nav">
         {% if user.is_authenticated %}
+            <a class="nav-link" href="{% url 'detail' %}">
+              Profile
+            </a>
             <a class="nav-link" href="{% url 'jobs.index' %}">
                 Job Board
+            </a>
+            <a class="nav-link" href="{% url 'jobs.map' %}">
+              Job Map
             </a>
         {% endif %}
         {% if user.is_authenticated and request.user.account.role == 'recruiter' %}
