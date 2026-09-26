@@ -34,6 +34,9 @@
             </a>
         {% endif %}
         {% if user.is_authenticated and request.user.account.role == 'recruiter' %}
+            <a class="nav-link" href="{% url 'jobs.candidate_search' %}">
+              Candidate Board
+            </a>
             <a class="nav-link" href="{% url 'jobs.recruiter' %}">
               My Jobs 
             </a>

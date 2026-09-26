@@ -66,6 +66,7 @@ class Application(models.Model):
 
     def __str__(self):
         return str(self.id) + ' - ' + self.job.title
+    
 class Report(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),

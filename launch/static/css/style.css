@@ -515,6 +515,8 @@
     color: #62647a;
     border: 1px solid #d7d2e3;
     border-radius: 5px;
+
+}
 /* Search Bar */
 .job-search {
     background: linear-gradient(110deg, #171229, #29346e, #5420a1);
@@ -650,9 +652,6 @@ margin-bottom: 6px;
 .create-job-btn:hover {
     background: #431883;
 }
-
-
-/* --- Job posting form ("Broadcast your opportunity") ----------- */
 
 .job-form-page {
     background: linear-gradient(110deg, #171229, #29346e, #5420a1);
