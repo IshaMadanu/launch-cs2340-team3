@@ -1,23 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Job, CartItem
+from .models import Job, CartItem, Application
 from .forms import JobForm
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from django.contrib import messages
+from django.db.models import Q
+from profiles.models import Profile
 
 # Create your views here.
 
 #Recruiter:
 
 def is_recruiter(user):
-    return user.is_superuser or (getattr(user, 'profile', None) and user.profile.role == 'recruiter')
+    return user.is_superuser or (getattr(user, 'account', None) and user.account.role == 'recruiter')
 
 def recruiter_required(view_func):
     @wraps(view_func)
     @login_required
     def wrapper(request, *args, **kwargs):
-        profile = getattr(request.user, 'profile', None)
+        account = getattr(request.user, 'account', None)
         if not is_recruiter(request.user):
             messages.error(request, 'Must be a Recruiter to access this page')
             return redirect('jobs.index')
@@ -35,6 +37,36 @@ def recruiter_jobs(request):
         {'title' : 'Job Postings',
          'jobs': jobs}
     )
+
+@recruiter_required
+def job_applicants(request, id):
+    job = get_object_or_404(Job, id=id, recruiter=request.user)
+
+    applications = (
+        Application.objects
+        .filter(job=job)
+        .select_related('user', 'user__profile')
+    )
+
+    return render(request, 'jobs/job_applicants.html', {
+        'job': job,
+        'applications': applications,
+    })
+
+
+@recruiter_required
+def applicant_detail(request, id, application_id):
+    application = get_object_or_404(
+        Application.objects.select_related('user', 'user__profile'),
+        id=application_id,
+        job__id=id,
+        job__recruiter=request.user,
+    )
+
+    return render(request, 'jobs/applicant_detail.html', {
+        'application': application,
+        'profile': application.user.profile,
+    })    
 
 @recruiter_required
 def create_job(request):
@@ -92,11 +124,46 @@ def delete_job(request, id):
 #Both:
 
 def index(request):
-    template_data = {}
-    template_data['title'] = 'Jobs'
-    template_data['jobs'] = Job.objects.all()
-    return render(request, 'jobs/index.html',
-                  {'template_data': template_data})
+    jobs = Job.objects.all()
+
+    search = request.GET.get('search', '')
+    location = request.GET.get('location', '')
+    min_salary = request.GET.get('min_salary', '')
+    max_salary = request.GET.get('max_salary', '')
+    work_type = request.GET.get('work_type', '')
+    visa = request.GET.get('visa', '')
+
+    if search:
+        jobs = jobs.filter(
+            Q(title__icontains=search) |
+            Q(skills__icontains=search)
+        )
+
+    if location:
+        jobs = jobs.filter(location__icontains=location)
+
+    if min_salary:
+        jobs = jobs.filter(salary__gte=min_salary)
+
+    if max_salary:
+        jobs = jobs.filter(salary__lte=max_salary)
+
+    if work_type:
+        jobs = jobs.filter(work_type=work_type)
+
+    if visa == 'yes':
+        jobs = jobs.filter(visa_sponsorship=True)
+    elif visa == 'no':
+        jobs = jobs.filter(visa_sponsorship=False)
+
+    template_data = {
+        'title': 'Jobs',
+        'jobs': jobs,
+    }
+
+    return render(request, 'jobs/index.html', {
+        'template_data': template_data
+    })
 
 def show(request, id):
     job = Job.objects.get(id=id)
@@ -149,3 +216,61 @@ def remove_from_cart(request, id):
         cart_item.delete()
 
     return redirect('jobs.cart')
+
+@login_required
+def apply(request, id):
+    if request.method == 'POST':
+        job = Job.objects.get(id=id)
+        application = Application()
+        application.note = request.POST['note']
+        application.job = job
+        application.user = request.user
+        application.save()
+    return redirect('jobs.show', id=id)
+
+@recruiter_required
+def candidate_search(request):
+    """
+    Lets a recruiter search candidate profiles by skill, project,
+    location, headline, bio, work experience, or education.
+    """
+    query = request.GET.get("q", "").strip()
+    location = request.GET.get("location", "").strip()
+
+    results = Profile.objects.all()
+
+    if query:
+        results = results.filter(
+            Q(skills__name__icontains=query)
+            | Q(projects__name__icontains=query)
+            | Q(projects__description__icontains=query)
+            | Q(headline__icontains=query)
+            | Q(bio__icontains=query)
+            | Q(work_experiences__company__icontains=query)
+            | Q(work_experiences__description__icontains=query)
+            | Q(educations__institution__icontains=query)
+        )
+
+    if location:
+        results = results.filter(location__icontains=location)
+
+    results = (
+        results
+        .distinct()
+        .prefetch_related(
+            "skills",
+            "projects",
+            "educations",
+            "work_experiences",
+        )
+    )
+
+    return render(
+        request,
+        "jobs/candidate_search.html",
+        {
+            "query": query,
+            "location": location,
+            "results": results,
+        },
+    )

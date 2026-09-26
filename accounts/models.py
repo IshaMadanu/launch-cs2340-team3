@@ -16,6 +16,9 @@ class Account(models.Model):
         default='candidate'
     )
 
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    company_email = models.EmailField(blank=True, null=True)
+
     def __str__(self):
         return f"{self.user.username} - {self.role}"
 

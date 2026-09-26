@@ -33,7 +33,10 @@
                 Job Board
             </a>
         {% endif %}
-        {% if user.is_authenticated and request.user.profile.role == 'recruiter' %}
+        {% if user.is_authenticated and request.user.account.role == 'recruiter' %}
+            <a class="nav-link" href="{% url 'jobs.candidate_search' %}">
+              Candidate Board
+            </a>
             <a class="nav-link" href="{% url 'jobs.recruiter' %}">
               My Jobs 
             </a>
@@ -41,11 +44,26 @@
               Create Job
             </a>
           {% endif %}
-          {% if user.is_authenticated and request.user.profile.role == 'candidate' %}
+          {% if user.is_authenticated and request.user.account.role == 'candidate' %}
             <a class="nav-link" href="{% url 'jobs.cart' %}">
               My Cart
             </a>
           {% endif %}
+          {% if user.is_authenticated %}
+            <a class="nav-link"
+              href="{% url 'accounts.logout' %}">
+              Logout ({{ user.username }})
+            </a>
+            {% else %}
+            <a class="nav-link"
+              href="{% url 'accounts.login' %}">
+              Login
+            </a>
+            <a class="nav-link"
+              href="{% url 'accounts.signup' %}">
+              Sign Up
+            </a>
+            {% endif %}
         </div>
       </div>
     </nav>
