@@ -82,7 +82,7 @@ WorkExperienceFormSet = inlineformset_factory(
     WorkExperience,
     form=WorkExperienceForm,
     extra=1,
-    can_delete=True,
+    can_delete=False
 )
 
 EducationFormSet = inlineformset_factory(
@@ -90,7 +90,7 @@ EducationFormSet = inlineformset_factory(
     Education,
     form=EducationForm,
     extra=1,
-    can_delete=True,
+    can_delete=False
 )
 
 SkillFormSet = inlineformset_factory(
@@ -98,7 +98,7 @@ SkillFormSet = inlineformset_factory(
     Skill,
     form=SkillForm,
     extra=1,
-    can_delete=True,
+    can_delete=False
 )
 
 LinkFormSet = inlineformset_factory(
@@ -106,5 +106,5 @@ LinkFormSet = inlineformset_factory(
     Link,
     form=LinkForm,
     extra=1,
-    can_delete=True,
+    can_delete=False
 )

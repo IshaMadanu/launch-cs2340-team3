@@ -1,7 +1,9 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<h1>Edit Profile</h1>
+<div class="text-center">
+  <h1>Edit Profile</h1>
+</div>
 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
@@ -30,7 +32,6 @@
               <div class="formset-row">
                 {{ f.id }}
                 {{ f.as_p }}
-                {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
               </div>
             {% endfor %}
           </div>
@@ -58,7 +59,6 @@
               <div class="formset-row">
                 {{ f.id }}
                 {{ f.as_p }}
-                {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
               </div>
             {% endfor %}
           </div>
@@ -83,7 +83,6 @@
             <div class="formset-row">
               {{ f.id }}
               {{ f.as_p }}
-              {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
             </div>
           {% endfor %}
         </fieldset>
@@ -101,7 +100,6 @@
             <div class="formset-row">
               {{ f.id }}
               {{ f.as_p }}
-              {% if f.instance.pk %}<label>{{ f.DELETE }} Remove</label>{% endif %}
             </div>
           {% endfor %}
         </fieldset>
@@ -109,7 +107,9 @@
     </div>
   </div>
 
-  <button class="btn bg-dark text-white" type="submit">Save Profile</button>
+  <div class="text-center">
+    <button class="btn bg-dark text-white" type="submit">Save Profile</button>
+  </div>
 
   <script>
   document.getElementById('add-work-form').addEventListener('click', function () {
