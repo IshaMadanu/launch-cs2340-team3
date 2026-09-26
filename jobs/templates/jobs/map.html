@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="padding: 30px;">
+    <h1>Map your mission!</h1>
+    <p>Find jobs near you and set your preferred commute radius</p>
+
+    <div style="display: flex; gap: 30px; margin: 20px 0;">
+        <div>
+            <label>Location</label><br>
+            <input
+                id="location"
+                type="text"
+                value="266 Ferst Dr NW, Atlanta, GA 30332"
+                style="width: 300px; padding: 10px;"
+            >
+            <button onclick="findLocation()">Go</button>
+        </div>
+
+        <div>
+            <label>
+                Preferred Commute Radius:
+                <span id="radiusValue">50</span> miles
+            </label><br>
+            <input
+                id="radius"
+                type="range"
+                min="0"
+                max="100"
+                value="50"
+                oninput="updateRadius()"
+            >
+        </div>
+    </div>
+
+    <div id="map" style="width: 100%; height: 550px;"></div>
+</div>
+
+<script>
+let map;
+let userMarker;
+let radiusCircle;
+
+const defaultLocation = {
+    lat: 33.7756,
+    lng: -84.3963
+};
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: defaultLocation,
+        zoom: 12
+    });
+
+    userMarker = new google.maps.Marker({
+        position: defaultLocation,
+        map: map,
+        title: "Your location"
+    });
+
+    radiusCircle = new google.maps.Circle({
+        map: map,
+        center: defaultLocation,
+        radius: 50 * 1609.34,
+        fillOpacity: 0.2,
+        strokeOpacity: 0.5
+    });
+}
+
+function updateRadius() {
+    const miles = document.getElementById("radius").value;
+
+    document.getElementById("radiusValue").textContent = miles;
+
+    radiusCircle.setRadius(miles * 1609.34);
+}
+
+function findLocation() {
+    const address = document.getElementById("location").value;
+    const geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode(
+        { address: address },
+        function(results, status) {
+            if (status === "OK") {
+                const location = results[0].geometry.location;
+
+                map.setCenter(location);
+                userMarker.setPosition(location);
+                radiusCircle.setCenter(location);
+            } else {
+                alert("Location not found.");
+            }
+        }
+    );
+}
+</script>
+
+<script async
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap">
+</script>
+
+{% endblock %}

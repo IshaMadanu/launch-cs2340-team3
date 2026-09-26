@@ -7,6 +7,7 @@ from functools import wraps
 from django.contrib import messages
 from django.db.models import Q
 from profiles.models import Profile
+from django.conf import settings
 
 # Create your views here.
 
@@ -274,3 +275,11 @@ def candidate_search(request):
             "results": results,
         },
     )
+
+def job_map(request):
+    jobs = Job.objects.all()
+
+    return render(request, 'jobs/map.html', {
+        'jobs': jobs,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
+    })
