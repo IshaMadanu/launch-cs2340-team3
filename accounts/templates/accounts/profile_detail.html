@@ -1,87 +1,109 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="profile-detail">
-  <header class="profile-header">
-    <h1>{{ profile.name }}</h1>
-    {% if profile.headline %}
-      <p class="headline">{{ profile.headline }}</p>
-    {% endif %}
-    {% if request.user == profile.user %}
-      <a href="{% url 'edit' %}">Edit profile</a>
-    {% endif %}
+<div class="job-form-page">
+  <div class="job-form">
+    <div class="row">
 
-  </header>
-  {% if profile.bio %}
-  <section class="bio">
-    <h2>About</h2>
-    <p>{{ profile.bio|linebreaks }}</p>
-  </section>
-  {% endif %}
+      {# ---------------- LEFT COLUMN ---------------- #}
+      <div class="col-lg-7">
 
-  {% if profile.work_experiences.all %}
-  <section class="work-experience">
-    <h2>Work Experience</h2>
-    {% for job in profile.work_experiences.all %}
-      <div class="entry">
-        <h3>{{ job.title }} &middot; {{ job.company }}</h3>
-        <p class="dates">
-          {{ job.start_date|date:"M Y" }} &ndash;
-          {% if job.end_date %}
-            {{ job.end_date|date:"M Y" }}
-          {% else %}
-            Present
-          {% endif %}
-        </p>
-        {% if job.description %}<p>{{ job.description|linebreaks }}</p>{% endif %}
-      </div>
-    {% endfor %}
-  </section>
-  {% endif %}
-
-  {% if profile.educations.all %}
-  <section class="education">
-    <h2>Education</h2>
-    {% for edu in profile.educations.all %}
-      <div class="entry">
-        <h3>{{ edu.institution }}</h3>
-        <p>{{ edu.degree }}{% if edu.field_of_study %}, {{ edu.field_of_study }}{% endif %}</p>
-        {% if edu.start_date %}
-          <p class="dates">
-            {{ edu.start_date|date:"Y" }}{% if edu.end_date %} &ndash; {{ edu.end_date|date:"Y" }}{% endif %}
-          </p>
+        {% if show_name %}
+          <div class="form-row cols-2">
+            <div class="form-field">
+              <label>First name</label>
+              <div class="profile-box">{{ profile.first_name }}</div>
+            </div>
+            <div class="form-field">
+              <label>Last name</label>
+              <div class="profile-box">{{ profile.last_name }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="form-field">
+            <label>Name</label>
+            <div class="profile-box">Candidate</div>
+          </div>
         {% endif %}
+
+        {% if skills %}
+          <h2 class="profile-section-title">Skills</h2>
+          <div class="figma-skills-row profile-skills">
+            {% for skill in skills %}<span class="figma-skill">{{ skill.name }}</span>{% endfor %}
+          </div>
+        {% endif %}
+
+        {% if educations %}
+          <h2 class="profile-section-title">Education</h2>
+          {% for edu in educations %}
+            <div class="profile-box">
+              {{ edu.institution }}
+              {% if edu.dates %}<small>{{ edu.dates }}</small>{% endif %}
+              {% if edu.notes %}<small>{{ edu.notes|linebreaksbr }}</small>{% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if work_experiences %}
+          <h2 class="profile-section-title">Work Experience</h2>
+          {% for job in work_experiences %}
+            <div class="profile-box">
+              {{ job.title }}
+              {% if job.dates %}<small>{{ job.dates }}</small>{% endif %}
+              {% if job.description %}<small>{{ job.description|linebreaksbr }}</small>{% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
+
       </div>
-    {% endfor %}
-  </section>
-  {% endif %}
 
-  {% if profile.skills.all %}
-  <section class="skills">
-    <h2>Skills</h2>
-    <ul class="skill-list">
-      {% for skill in profile.skills.all %}
-        <li>{{ skill.name }}</li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
+      {# ---------------- RIGHT COLUMN ---------------- #}
+      <div class="col-lg-5">
 
-  {% if profile.links.all %}
-  <section class="links">
-    <h2>Links</h2>
-    <ul>
-      {% for link in profile.links.all %}
-        <li><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a></li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
+        {% if show_picture and profile.profile_picture %}
+          <div class="form-field">
+            <label>Profile Picture</label>
+            <img src="{{ profile.profile_picture.url }}" alt="" class="profile-avatar d-block mb-3">
+          </div>
+        {% endif %}
 
-  {% if profile.resume %}
-  <section class="resume">
-    <a href="{{ profile.resume.url }}" target="_blank" rel="noopener">Download Resume</a>
-  </section>
-  {% endif %}
+        {% if show_headline and profile.headline %}
+          <div class="form-field">
+            <label>Headline</label>
+            <div class="profile-box">{{ profile.headline|linebreaksbr }}</div>
+          </div>
+        {% endif %}
+
+        {% if show_location and profile.location %}
+          <div class="form-field">
+            <label>Location</label>
+            <div class="profile-box">{{ profile.location }}</div>
+          </div>
+        {% endif %}
+
+        {% if links %}
+          <div class="form-field">
+            <label>Links</label>
+            {% for link in links %}
+              <div class="profile-box"><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.url }}</a></div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="job-form-actions justify-content-end flex-wrap">
+      {% if is_owner %}
+        <a href="{% url 'edit' %}" class="figma-view-btn profile-btn">Edit profile</a>
+      {% else %}
+        {# TODO: wire these up once messaging/email exists #}
+        <button type="button" class="figma-view-btn profile-btn">Send message</button>
+        <button type="button" class="figma-view-btn profile-btn">Send email</button>
+      {% endif %}
+      <a href="javascript:history.back()" class="btn-cancel">Back</a>
+    </div>
+
+  </div>
 </div>
 {% endblock %}

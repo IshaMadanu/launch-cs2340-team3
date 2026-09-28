@@ -49,48 +49,57 @@ class CustomUserCreationForm(UserCreationForm):
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        CHOICES = [('one', 'One'), ('two', 'Two')]
         model = Profile
-        fields = ["name", "headline", "bio"]
+        fields = [
+            "first_name", "last_name", "name_visible",
+            "profile_picture", "picture_visible",
+            "headline", "headline_visible",
+            "bio",
+            "location", "location_visible",
+        ]
         widgets = {
-            "bio": forms.Textarea(attrs={"rows": 6, "placeholder" : "Tell use a little bit about yourself!"}),
-            "headline" : forms.TextInput(attrs={"placeholder" : "CS Student @ Georgia Tech Interested in AI and Robotics"}),
+            "headline": forms.Textarea(attrs={
+                "rows": 4,
+                "placeholder": "CS Student @ Georgia Tech interested in AI and Robotics",
+            }),
+            "location": forms.TextInput(attrs={"placeholder": "City, State"}),
         }
-
-
+ 
+ 
 class WorkExperienceForm(forms.ModelForm):
     class Meta:
         model = WorkExperience
-        fields = ["company", "title", "start_date", "end_date", "description"]
+        fields = ["company", "title", "dates", "description", "visible"]
+        labels = {"description": "Notes"}
         widgets = {
-            "start_date": forms.DateInput(attrs={"type": "date"}),
-            "end_date": forms.DateInput(attrs={"type": "date"}),
+            "dates": forms.TextInput(attrs={"placeholder": "September 2025 - Present"}),
             "description": forms.Textarea(attrs={"rows": 3}),
         }
-
-
+ 
+ 
 class EducationForm(forms.ModelForm):
     class Meta:
         model = Education
-        fields = ["institution", "degree", "field_of_study", "start_date", "end_date"]
+        fields = ["institution", "dates", "notes", "visible"]
+        labels = {"institution": "School"}
         widgets = {
-            "start_date": forms.DateInput(attrs={"type": "date"}),
-            "end_date": forms.DateInput(attrs={"type": "date"}),
+            "dates": forms.TextInput(attrs={"placeholder": "August 2025 - December 2028"}),
+            "notes": forms.Textarea(attrs={"rows": 2}),
         }
-
-
+ 
+ 
 class SkillForm(forms.ModelForm):
     class Meta:
         model = Skill
-        fields = ["name"]
-
-
+        fields = ["name", "skills_visible"]
+ 
+ 
 class LinkForm(forms.ModelForm):
     class Meta:
         model = Link
-        fields = ["label", "url"]
-
-
+        fields = ["url", "visible"]
+ 
+ 
 WorkExperienceFormSet = inlineformset_factory(
     Profile,
     WorkExperience,
@@ -98,7 +107,7 @@ WorkExperienceFormSet = inlineformset_factory(
     extra=1,
     can_delete=False
 )
-
+ 
 EducationFormSet = inlineformset_factory(
     Profile,
     Education,
@@ -106,7 +115,7 @@ EducationFormSet = inlineformset_factory(
     extra=1,
     can_delete=False
 )
-
+ 
 SkillFormSet = inlineformset_factory(
     Profile,
     Skill,
@@ -114,7 +123,7 @@ SkillFormSet = inlineformset_factory(
     extra=1,
     can_delete=False
 )
-
+ 
 LinkFormSet = inlineformset_factory(
     Profile,
     Link,

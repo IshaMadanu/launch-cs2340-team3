@@ -703,6 +703,7 @@ margin-bottom: 6px;
 .form-field input[type="text"],
 .form-field input[type="number"],
 .form-field input[type="email"],
+.form-field input[type="url"],
 .form-field select,
 .form-field textarea {
     width: 100%;
@@ -783,4 +784,110 @@ margin-bottom: 6px;
     padding: 13px 38px;
     text-decoration: none;
     text-align: center;
+}
+
+.profile-form .job-form-heading {
+    font-size: 18px;
+    margin-bottom: 24px;
+}
+
+.profile-section-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 28px 0 12px;
+}
+
+.profile-form .form-field textarea {
+    min-height: 90px;
+    background: white;
+}
+
+.profile-form input[type="file"] {
+    color: white;
+    font-size: 13px;
+}
+
+.profile-form .formset-row {
+    margin-bottom: 16px;
+}
+
+.profile-form .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+    color: #ffb4c2;
+    font-size: 12px;
+}
+
+.profile-form .profile-skills-edit input {
+    border-radius: 999px;
+    text-align: center;
+}
+
+.profile-vis {
+    text-align: center;
+}
+
+.profile-vis small {
+    display: block;
+    font-size: 11px;
+    color: #d5d4e2;
+    margin-bottom: 4px;
+}
+
+.profile-vis input {
+    width: 28px;
+    height: 28px;
+    accent-color: #829cff;
+}
+
+.profile-add-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: white;
+    font-size: 13px;
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #f4f4f8;
+}
+
+.profile-box {
+    background: white;
+    color: #12152d;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.profile-box small {
+    display: block;
+    font-weight: 400;
+    color: #62647a;
+    margin-top: 2px;
+}
+
+.profile-box a {
+    color: #12152d;
+    word-break: break-all;
+}
+
+.profile-skills .figma-skill {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 20px;
+}
+
+.profile-btn {
+    width: auto;
+    padding: 13px 38px;
+    font-size: 15px;
+    cursor: pointer;
 }
