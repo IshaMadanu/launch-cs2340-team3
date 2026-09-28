@@ -79,54 +79,82 @@ def signup(request):
             return render(request, 'accounts/signup.html',
                 {'template_data': template_data})
 
+def _profile_defaults(user):
+    """Values used the first time a profile row is created for a user."""
+    return {"first_name": user.first_name, "last_name": user.last_name}
+ 
+ 
 def profile_detail(request, username=None):
     """
     If user is not authenticated, redirect to the login page. Otherwise, go to profile.
     """
     # if looking at your own profile
     if username is None:
+        # if not logged in
         if not request.user.is_authenticated:
             return redirect("accounts.login")
         # get or create the current user's profile
-        profile, created = Profile.objects.get_or_create(user=request.user, defaults={"name": request.user.get_full_name()})
-        
+        profile, created = Profile.objects.get_or_create(
+            user=request.user, defaults=_profile_defaults(request.user)
+        )
+ 
     #if looking at someone else's profile
     else:
         profile = get_object_or_404(Profile, user__username=username)
-
-    return render(request, "accounts/profile_detail.html", {"profile": profile})
-
-
+ 
+    is_owner = request.user.is_authenticated and request.user == profile.user
+ 
+    def shown(queryset):
+        # per-entry visibility (education, work, links)
+        return queryset if is_owner else queryset.filter(visible=True)
+ 
+    context = {
+        "profile": profile,
+        "is_owner": is_owner,
+        "show_name": is_owner or profile.name_visible,
+        "show_picture": is_owner or profile.picture_visible,
+        "show_headline": is_owner or profile.headline_visible,
+        "show_location": is_owner or profile.location_visible,
+        "educations": shown(profile.educations.all()),
+        "work_experiences": shown(profile.work_experiences.all()),
+        "links": shown(profile.links.all()),
+        "skills": profile.skills.all() if is_owner else profile.skills.filter(skills_visible=True),    
+    }
+    return render(request, "accounts/profile_detail.html", context)
+ 
+ 
 @login_required
 def profile_edit(request):
     """
     Get the user's profile and uses it to fill out fields on the edit profile page.
     Allows users to update their profile and renders the updated page.
     """
-    profile, created = Profile.objects.get_or_create(user=request.user, defaults={"name": request.user.get_full_name()})
-
+    profile, created = Profile.objects.get_or_create(
+        user=request.user, defaults=_profile_defaults(request.user)
+    )
+ 
     form = ProfileForm(instance=profile)
     work_formset = WorkExperienceFormSet(instance=profile, prefix="work")
     edu_formset = EducationFormSet(instance=profile, prefix="edu")
     skill_formset = SkillFormSet(instance=profile, prefix="skill")
     link_formset = LinkFormSet(instance=profile, prefix="link")
-
+ 
     if request.method == "POST":
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         work_formset = WorkExperienceFormSet(request.POST, instance=profile, prefix="work")
         edu_formset = EducationFormSet(request.POST, instance=profile, prefix="edu")
         skill_formset = SkillFormSet(request.POST, instance=profile, prefix="skill")
         link_formset = LinkFormSet(request.POST, instance=profile, prefix="link")
-
+ 
         formsets = [work_formset, edu_formset, skill_formset, link_formset]
-
+ 
         if form.is_valid() and all(fs.is_valid() for fs in formsets):
+            form.save()
             for fs in formsets:
                 fs.save()
-            form.save()
             messages.success(request, "Profile saved.")
             return redirect("detail")
-
+ 
     return render(
         request,
         "accounts/profile_form.html",
