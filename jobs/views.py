@@ -194,7 +194,7 @@ def cart(request):
 
 
 @login_required
-def add_to_cart(request, id):
+def addCart(request, id):
     job = get_object_or_404(Job, id=id)
 
     if request.method == 'POST':
