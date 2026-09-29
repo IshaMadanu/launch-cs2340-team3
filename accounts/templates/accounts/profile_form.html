@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="job-form-page profile-form">
+  {% csrf_token %}
+  <div class="job-form">
+
+    <p class="job-form-heading">
+      <span>Choose what recruiters can see:</span>
+      Check the boxes next to the information you'd like recruiters to have access to.
+    </p>
+    {{ form.non_field_errors }}
+
+    <div class="row">
+
+      {# ---------------- LEFT COLUMN ---------------- #}
+      <div class="col-lg-7">
+
+        {# Name #}
+        <div class="d-flex gap-3 align-items-end">
+          <div class="flex-fill form-field">
+            {{ form.first_name.label_tag }}{{ form.first_name }}{{ form.first_name.errors }}
+          </div>
+          <div class="flex-fill form-field">
+            {{ form.last_name.label_tag }}{{ form.last_name }}{{ form.last_name.errors }}
+          </div>
+          <div class="profile-vis"><small>Visibility</small>{{ form.name_visible }}</div>
+        </div>
+
+        {# Education #}
+        <h2 class="profile-section-title">Education</h2>
+        {{ edu_formset.management_form }}
+        <div id="edu-formset-rows">
+          {% for f in edu_formset %}
+            <div class="formset-row">
+              {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+              <div class="d-flex gap-3 align-items-end mb-2">
+                <div class="flex-fill form-field">{{ f.institution.label_tag }}{{ f.institution }}{{ f.institution.errors }}</div>
+                <div class="flex-fill form-field">{{ f.dates.label_tag }}{{ f.dates }}{{ f.dates.errors }}</div>
+                <div class="profile-vis"><small>Visibility</small>{{ f.visible }}</div>
+              </div>
+              <div class="form-field">{{ f.notes.label_tag }}{{ f.notes }}{{ f.notes.errors }}</div>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="profile-add-btn" data-add="edu">Add another school +</button>
+        <template id="edu-empty-form">
+          <div class="formset-row">
+            {% with f=edu_formset.empty_form %}
+              {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+              <div class="d-flex gap-3 align-items-end mb-2">
+                <div class="flex-fill form-field">{{ f.institution.label_tag }}{{ f.institution }}</div>
+                <div class="flex-fill form-field">{{ f.dates.label_tag }}{{ f.dates }}</div>
+                <div class="profile-vis"><small>Visibility</small>{{ f.visible }}</div>
+              </div>
+              <div class="form-field">{{ f.notes.label_tag }}{{ f.notes }}</div>
+            {% endwith %}
+          </div>
+        </template>
+
+        {# Work experience #}
+        <h2 class="profile-section-title">Work Experience</h2>
+        {{ work_formset.management_form }}
+        <div id="work-formset-rows">
+          {% for f in work_formset %}
+            <div class="formset-row">
+              {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+              <div class="d-flex gap-3 align-items-end mb-2">
+                <div class="flex-fill form-field">{{ f.title.label_tag }}{{ f.title }}{{ f.title.errors }}</div>
+                <div class="flex-fill form-field">{{ f.dates.label_tag }}{{ f.dates }}{{ f.dates.errors }}</div>
+                <div class="profile-vis"><small>Visibility</small>{{ f.visible }}</div>
+              </div>
+              {# company is a model field but isn't in the mockup, so it isn't rendered #}
+              <div class="form-field">{{ f.description.label_tag }}{{ f.description }}{{ f.description.errors }}</div>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="profile-add-btn" data-add="work">Add another work experience +</button>
+        <template id="work-empty-form">
+          <div class="formset-row">
+            {% with f=work_formset.empty_form %}
+              {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+              <div class="d-flex gap-3 align-items-end mb-2">
+                <div class="flex-fill form-field">{{ f.title.label_tag }}{{ f.title }}</div>
+                <div class="flex-fill form-field">{{ f.dates.label_tag }}{{ f.dates }}</div>
+                <div class="profile-vis"><small>Visibility</small>{{ f.visible }}</div>
+              </div>
+              <div class="form-field">{{ f.description.label_tag }}{{ f.description }}</div>
+            {% endwith %}
+          </div>
+        </template>
+
+        {# Skills (each skill has its own visibility box) #}
+        <h2 class="profile-section-title">Skills</h2>
+        {{ skill_formset.management_form }}
+        <div id="skill-formset-rows" class="d-flex flex-wrap gap-2 mb-2 profile-skills-edit">
+          {% for f in skill_formset %}
+            <div class="formset-row m-0 d-flex align-items-center gap-2">
+              {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+              <div class="form-field">{{ f.name }}{{ f.name.errors }}</div>
+              <div class="profile-vis">{{ f.skills_visible }}</div>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="profile-add-btn" data-add="skill">Add another skill +</button>
+        <template id="skill-empty-form">
+          <div class="formset-row m-0 d-flex align-items-center gap-2">
+            {% for h in skill_formset.empty_form.hidden_fields %}{{ h }}{% endfor %}
+            <div class="form-field">{{ skill_formset.empty_form.name }}</div>
+            <div class="profile-vis">{{ skill_formset.empty_form.skills_visible }}</div>
+          </div>
+        </template>
+
+      </div>
+
+      {# ---------------- RIGHT COLUMN ---------------- #}
+      <div class="col-lg-5">
+
+        {# Profile picture #}
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="form-field">
+            {{ form.profile_picture.label_tag }}
+            {% if form.instance.profile_picture %}
+              <img src="{{ form.instance.profile_picture.url }}" alt="" class="profile-avatar d-block mb-2">
+            {% endif %}
+            {{ form.profile_picture }}{{ form.profile_picture.errors }}
+          </div>
+          <div class="profile-vis"><small>Visibility</small>{{ form.picture_visible }}</div>
+        </div>
+
+        {# Headline #}
+        <div class="d-flex gap-3 align-items-end mb-3">
+          <div class="flex-fill form-field">
+            {{ form.headline.label_tag }}{{ form.headline }}{{ form.headline.errors }}
+          </div>
+          <div class="profile-vis"><small>Visibility</small>{{ form.headline_visible }}</div>
+        </div>
+
+        {# Location #}
+        <div class="d-flex gap-3 align-items-end mb-3">
+          <div class="flex-fill form-field">
+            {{ form.location.label_tag }}{{ form.location }}{{ form.location.errors }}
+          </div>
+          <div class="profile-vis"><small>Visibility</small>{{ form.location_visible }}</div>
+        </div>
+
+        {# Links #}
+        <div class="form-field"><label>Links</label></div>
+        {{ link_formset.management_form }}
+        <div id="link-formset-rows">
+          {% for f in link_formset %}
+            <div class="formset-row d-flex gap-3 align-items-center">
+              {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+              <div class="flex-fill form-field">{{ f.url }}{{ f.url.errors }}</div>
+              <div class="profile-vis">{{ f.visible }}</div>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="profile-add-btn" data-add="link">Add another link +</button>
+        <template id="link-empty-form">
+          <div class="formset-row d-flex gap-3 align-items-center">
+            {% for h in link_formset.empty_form.hidden_fields %}{{ h }}{% endfor %}
+            <div class="flex-fill form-field">{{ link_formset.empty_form.url }}</div>
+            <div class="profile-vis">{{ link_formset.empty_form.visible }}</div>
+          </div>
+        </template>
+
+      </div>
+    </div>
+
+    <div class="job-form-actions justify-content-center">
+      <button class="btn-post" type="submit">Save Profile</button>
+    </div>
+
+  </div>
+</form>
+
+<script>
+  // One handler for every "Add another ..." button (data-add = formset prefix)
+  document.querySelectorAll('[data-add]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const prefix = btn.dataset.add;
+      const total = document.getElementById('id_' + prefix + '-TOTAL_FORMS');
+      const index = parseInt(total.value, 10);
+      const html = document.getElementById(prefix + '-empty-form').innerHTML.replace(/__prefix__/g, index);
+      document.getElementById(prefix + '-formset-rows').insertAdjacentHTML('beforeend', html);
+      total.value = index + 1;
+    });
+  });
+</script>
+{% endblock %}

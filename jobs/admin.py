@@ -3,8 +3,9 @@ from django.contrib import admin
 from django.http import HttpResponse
 
 # Register your models here.
-from .models import Job, Application, Report
+from .models import Job, Application, Report, CartItem
 
+admin.site.register(CartItem)
 
 @admin.action(description='Export selected to CSV')
 def export_to_csv(modeladmin, request, queryset):
@@ -44,6 +45,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 @admin.register(Report)
+
 class ReportAdmin(admin.ModelAdmin):
     list_display = ['reporter', 'reason', 'status', 'created_at']
     search_fields = ['reason']
